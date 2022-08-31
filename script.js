@@ -1,5 +1,43 @@
 let employeeList = [];
 
+async function fetchData(url) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    } catch (error) {
+      console.error('Unable to fetch data:', error);
+    }
+}
+  
+function fetchNames(nameType) {
+    return fetchData(`./data/names-${nameType}.json`);
+}
+  
+function pickRandom(list) {
+    return list[Math.floor(Math.random() * list.length)];
+}
+  
+async function generateName(gender) {
+    try {
+      const response = await Promise.all([
+        fetchNames(gender || pickRandom(['male', 'female'])),
+        fetchNames('surnames')
+      ]);
+  
+      const [firstNames, lastNames] = response;
+  
+      const firstName = pickRandom(firstNames.data);
+      const lastName = pickRandom(lastNames.data);
+  
+      return `${firstName} ${lastName}`;
+    } catch(error) {
+      console.error('Unable to generate name:', error);
+    }
+}
+  
 //Hash method
 String.prototype.hashCode = function() {
     let hash = 0
@@ -196,16 +234,21 @@ function printEmployee(employee) {
 //Generate fake data on click
 document.getElementById('fakeData').addEventListener('click', (e) => {
     e.preventDefault();
-    document.getElementById('fName').value = randomString();
-    document.getElementById('lName').value = randomString();
+    generateName().then((falseName) => {
+        document.getElementById('fName').value = falseName.split(' ')[0];
+        document.getElementById('lName').value = falseName.split(' ')[1];
+        document.getElementById('email').value = `${falseName.split(' ')[0].toLowerCase()}.${falseName.split(' ')[1].toLowerCase()}@${randomString(4)}.${randomString(2)}`;
+    });
+    fetch('./data/us-cities.json').then((response) => response.json())
+    .then((data) => {
+        document.getElementById('city').value = data.RandL.items[Math.floor(Math.random() * data.RandL.items.length)].name;
+    })
     document.getElementById('birthday').value = `${Math.floor(Math.random()*100 + 1930)}-${Math.floor(Math.random() * 3 + 10)}-${Math.floor(Math.random() * 10 + 10)}`;
     document.getElementById('gender').value = document.getElementById('gender')[Math.floor(Math.random() * 4)].value;
-    document.getElementById('email').value = `${randomString()}@${randomString(4)}.${randomString(2)}`;
     document.getElementById('pwd').value = randomString();
     document.getElementById('streetNumber').value = Math.floor(Math.random() * 99 + 1);
     document.getElementById('street').value = `rue ${randomString()}`;
     document.getElementById('postal').value = Math.floor(Math.random() * 10000);
-    document.getElementById('city').value = randomString();
     document.getElementById('phone').value = "0628820222";
     document.getElementById('contract').value = document.getElementById('contract')[Math.floor(Math.random() * 3)].value;
     document.getElementById('dContract').value = `${Math.floor(Math.random()*100 + 1930)}-${Math.floor(Math.random() * 3 + 10)}-${Math.floor(Math.random() * 10 + 10)}`;

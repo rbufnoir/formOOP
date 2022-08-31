@@ -1,3 +1,11 @@
 input:invalid {
     border: 1px red solid;
 }
+
+input {
+    border-radius: 3px;
+}
+
+input:valid {
+    background-color: rgb(53, 103, 197, 0.5);
+}
