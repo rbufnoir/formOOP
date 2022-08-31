@@ -14,18 +14,6 @@ String.prototype.hashCode = function() {
     return hash;
 };
 
-//Stop the process if a field is empty
-function checkform() {
-    var inputs = document.getElementsByTagName('input');
-    for (i = 0; i < inputs.length; i++) {
-        if (inputs[i].hasAttribute('required'))
-            if (inputs[i].value === "") {
-                alert("All fields must be fill!");
-                break;
-            }
-    }
-}
-
 class Employee {
     constructor(fName, lName, birthday, gender, email, pwd, adress, phoneNumber, contract, contractStart, baseSalary, avatarAdress) {
         this.fName = fName;
@@ -55,13 +43,20 @@ class Employee {
     }
 }
 
-//Changing the border color when an input field is empty
-document.getElementById('form').addEventListener('focusout', (e) => {
-    if (e.target.value === "")
-        e.target.style.border = "1px solid red";
-    else
-        e.target.style.border = "";
-})
+window.onload = () => {
+    document.getElementById('birthday').value = new Date().toISOString().substring(0,10);
+    document.getElementById('dContract').value = new Date().toISOString().substring(0,10);
+}
+
+//Autorising only number to be print
+document.getElementById('phone').addEventListener('keydown', (e) => {
+    if (document.getElementById('phone').value.length <= 10) {
+            document.getElementById('phone').value = (!isNaN(parseInt(e.key))) ? document.getElementById('phone').value : document.getElementById('phone').value.slice(0, -1);
+    }
+    else {
+        document.getElementById('phone').value = document.getElementById('phone').value.slice(0, -1);
+    }
+});
 
 //Generate a random string of length l
 function randomString(l = 8) {
@@ -71,6 +66,14 @@ function randomString(l = 8) {
     for (let i = 0; i < l; i++)
         str += chars.charAt(Math.floor(Math.random() * chars.length));
     return str;
+}
+
+function searchDuplicate(s, field) {
+    for (let i = 0; i < employeeList.length; i++) {
+        if (s === employeeList[i][field])
+            return true;
+    }
+    return false;
 }
 
 
@@ -191,7 +194,8 @@ function printEmployee(employee) {
 
 
 //Generate fake data on click
-document.getElementById('fakeData').addEventListener('click', () => {
+document.getElementById('fakeData').addEventListener('click', (e) => {
+    e.preventDefault();
     document.getElementById('fName').value = randomString();
     document.getElementById('lName').value = randomString();
     document.getElementById('birthday').value = `${Math.floor(Math.random()*100 + 1930)}-${Math.floor(Math.random() * 3 + 10)}-${Math.floor(Math.random() * 10 + 10)}`;
@@ -211,34 +215,43 @@ document.getElementById('fakeData').addEventListener('click', () => {
 
 //Adding an employee to employeeList[]
 document.getElementById('submit').addEventListener('click', (e) => {
-    e.preventDefault();
-    // checkform(); //This is annoying when testing...
-    let employee = new Employee(document.getElementById('fName').value,
-                                document.getElementById('lName').value,
-                                document.getElementById('birthday').value,
-                                document.getElementById('gender').value,
-                                document.getElementById('email').value,
-                                document.getElementById('pwd').value,
-                                document.getElementById('streetNumber').value + " " + document.getElementById('street').value + " " + document.getElementById('postal').value + " " + document.getElementById('city').value,
-                                document.getElementById('phone').value,
-                                document.getElementById('contract').value,
-                                document.getElementById('dContract').value,
-                                document.getElementById('baseSalary').value,
-                                document.getElementById('avatarURL').value
-    );
-    document.getElementById('fName').value = "";
-    document.getElementById('lName').value = "";
-    document.getElementById('birthday').value = "";
-    document.getElementById('email').value = "";
-    document.getElementById('email').value = "";
-    document.getElementById('streetNumber').value = "";
-    document.getElementById('street').value = "";
-    document.getElementById('postal').value = "";
-    document.getElementById('city').value = "";
-    document.getElementById('phone').value = "";
-    document.getElementById('avatarURL').value = "";
-    employeeList.push(employee);
-    window.name = JSON.stringify(employeeList);
+    // e.preventDefault();
+    if (document.getElementById('form').checkValidity()) {
+        if (searchDuplicate(document.getElementById('fName').value, "fName") && searchDuplicate(document.getElementById('lName').value, "lName"))
+            alert("Erreur: l'utilisateur existe déjà");
+        else if (searchDuplicate(document.getElementById('email').value, "email"))
+            alert("Erreur: l'adresse mail est déjà utilisée");
+        else if (searchDuplicate(document.getElementById('phone').value, "phone"))
+            alert("Erreur: le numéro de téléphone est déjà utilisé");
+        else {
+            let employee = new Employee(document.getElementById('fName').value,
+                                        document.getElementById('lName').value,
+                                        document.getElementById('birthday').value,
+                                        document.getElementById('gender').value,
+                                        document.getElementById('email').value,
+                                        document.getElementById('pwd').value,
+                                        document.getElementById('streetNumber').value + " " + document.getElementById('street').value + " " + document.getElementById('postal').value + " " + document.getElementById('city').value,
+                                        document.getElementById('phone').value,
+                                        document.getElementById('contract').value,
+                                        document.getElementById('dContract').value,
+                                        document.getElementById('baseSalary').value,
+                                        document.getElementById('avatarURL').value
+            );
+            document.getElementById('fName').value = "";
+            document.getElementById('lName').value = "";
+            document.getElementById('birthday').value = "";
+            document.getElementById('email').value = "";
+            document.getElementById('email').value = "";
+            document.getElementById('streetNumber').value = "";
+            document.getElementById('street').value = "";
+            document.getElementById('postal').value = "";
+            document.getElementById('city').value = "";
+            document.getElementById('phone').value = "";
+            document.getElementById('avatarURL').value = "";
+            employeeList.push(employee);
+            window.name = JSON.stringify(employeeList);
+        }
+    }
 });
 
 //Displaying employeeList[] in a table
