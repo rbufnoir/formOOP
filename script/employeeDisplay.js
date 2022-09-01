@@ -1,4 +1,4 @@
-import { employeeList  } from "../script.js";
+import { employeeList  } from "./main.js";
 
 //Display all the employees
 export function printEmployees() {
