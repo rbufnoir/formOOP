@@ -19,10 +19,10 @@ export class Employee {
         let currentYear = new Date().getFullYear();
         let startYear = this.contractStart.getFullYear();
         let diff = currentYear - startYear;
-        return (this.baseSalary.slice(1) * Math.pow(1.10, diff));
+        return Math.floor(this.baseSalary.slice(1) * Math.pow(1.10, diff));
     }
 
     username() {
-        return `${this.fName[0].toLowerCase()}${this.lName.toLowerCase()}${this.birthday.getFullYear().toString().slice(2)}`;
+        return `${this.fName[0].toLowerCase()}${this.lName.toLowerCase()}${this.birthday.getFullYear().toString().slice(2)}`.split(' ').join('');
     }
 }

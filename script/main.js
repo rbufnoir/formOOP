@@ -1,5 +1,6 @@
 import { Employee } from './employee.js';
 import { printEmployees, searchDuplicate } from './employeeDisplay.js';
+import { User } from './user.js';
 import { generateData } from './fakeData.js';
 
 export let employeeList = [];
@@ -18,10 +19,29 @@ String.prototype.hashCode = function() {
     return hash;
 };
 
+document.getElementById('loginSubmit').addEventListener('click', () => {
+    let login = document.getElementById('login').value;
+    let pwd = document.getElementById('loginPwd').value;
+
+    if (login === "test" && pwd === "test") {
+        document.getElementById('identification').style.display = "none";
+        document.getElementById('logout').style.display = "";
+        const user = new User(login);
+    }
+});
+
+document.getElementById('logout').addEventListener('click', () => {
+    const user = new User();
+    user.delete();
+    document.getElementById('identification').style.display = "";
+    document.getElementById('logout').style.display = "none";
+})
+
 window.onload = () => {
     document.getElementById('birthday').value = new Date().toISOString().substring(0,10);
     document.getElementById('dContract').value = new Date().toISOString().substring(0,10);
-}
+    document.getElementById('logout').style.display = "none";
+};
 
 //Autorising only number to be print
 document.getElementById('phone').addEventListener('keydown', (e) => {
@@ -77,6 +97,16 @@ document.getElementById('submit').addEventListener('click', (e) => {
             document.getElementById('phone').value = "";
             document.getElementById('avatarURL').value = "";
             employeeList.push(employee);
+            fetch("http://localhost:3000/employees", {
+                method: "POST",
+                body: JSON.stringify(employee),
+                headers: {
+                    'Content-type': 'application/json'
+                }
+            })
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+            console.log(JSON.stringify(employeeList));
             window.name = JSON.stringify(employeeList);
         }
     }

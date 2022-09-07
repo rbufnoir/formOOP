@@ -1,12 +1,13 @@
-import { employeeList  } from "./main.js";
+import { employeeList } from "./main.js";
+import { User } from "./user.js";
 
 //Display all the employees
 export function printEmployees() {
     let newTable = document.createElement('table');
     newTable.setAttribute('id', 'employeesList')
     newTable.setAttribute('class', 'table table-striped table-hover')
-    newTable.innerHTML = `
-    <thead>
+    newTable.innerHTML = 
+    `<thead>
         <tr>
             <th>#</th>
             <th>Avatar</th>
@@ -54,8 +55,8 @@ function printEmployee(employee) {
     let newTable = document.createElement('table');
     newTable.setAttribute('id', 'employeesList')
     newTable.setAttribute('class', 'table')
-    newTable.innerHTML = `
-    <thead>
+    newTable.innerHTML = 
+    `<thead>
         <tr>
             <th>Avatar</th>
             <th>Username</th>
@@ -89,7 +90,15 @@ function printEmployee(employee) {
                         <td><button>Edit</button></td>
                         `;
     newTbody.appendChild(newRow);
-    newRow.lastElementChild.children[0].addEventListener('click', () => editEmployee(employee, newRow));
+    newRow.lastElementChild.children[0].addEventListener('click', () => {
+        const user = new User();
+        if (user.user)
+            editEmployee(employee, newRow)
+        else {
+            alert("You must log yourself before editing")
+            user.delete();
+        }
+    });
     newButton.addEventListener('click', () => {
         document.getElementById('form').style.display = "";
         document.getElementById('searchBar').style.display = "";
