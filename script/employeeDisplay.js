@@ -31,8 +31,13 @@ export function printEmployees() {
         //Event listener: alert and remove
         newRow.addEventListener('click', (e) => {
             if (e.target === newRow.lastChild) {
-                employeeList.splice((newRow.firstChild.innerText - 1), 1);
-                window.name = JSON.stringify(employeeList);
+                fetch("http://localhost:3000/employees/" + employeeList[i].id, {
+                    method: 'DELETE',
+                })
+                .then(res => res.json())
+                .then(data => console.log(data))
+                .catch(err => console.err(err));
+                // window.name = JSON.stringify(employeeList);
                 newRow.remove();
             }
             else if (e.target != newRow.lastChild) {

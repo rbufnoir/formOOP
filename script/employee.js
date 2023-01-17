@@ -1,5 +1,6 @@
 export class Employee {
-    constructor(fName, lName, birthday, gender, email, pwd, adress, phoneNumber, contract, contractStart, baseSalary, avatarAdress) {
+    constructor(id, fName, lName, birthday, gender, email, pwd, adress, phoneNumber, contract, contractStart, baseSalary, avatarAdress) {
+        this.id = id;
         this.fName = fName;
         this.lName = lName;
         this.birthday = new Date(birthday);

@@ -19,28 +19,49 @@ String.prototype.hashCode = function() {
     return hash;
 };
 
-document.getElementById('loginSubmit').addEventListener('click', () => {
-    let login = document.getElementById('login').value;
-    let pwd = document.getElementById('loginPwd').value;
+// document.getElementById('loginSubmit').addEventListener('click', () => {
+//     let login = document.getElementById('login').value;
+//     let pwd = document.getElementById('loginPwd').value;
 
-    if (login === "test" && pwd === "test") {
-        document.getElementById('identification').style.display = "none";
-        document.getElementById('logout').style.display = "";
-        const user = new User(login);
-    }
-});
+//     if (login === "test" && pwd === "test") {
+//         document.getElementById('identification').style.display = "none";
+//         document.getElementById('logout').style.display = "";
+//         const user = new User(login);
+//     }
+// });
 
-document.getElementById('logout').addEventListener('click', () => {
-    const user = new User();
-    user.delete();
-    document.getElementById('identification').style.display = "";
-    document.getElementById('logout').style.display = "none";
-})
+// document.getElementById('logout').addEventListener('click', () => {
+//     const user = new User();
+//     user.delete();
+//     document.getElementById('identification').style.display = "";
+//     document.getElementById('logout').style.display = "none";
+// })
 
 window.onload = () => {
     document.getElementById('birthday').value = new Date().toISOString().substring(0,10);
     document.getElementById('dContract').value = new Date().toISOString().substring(0,10);
-    document.getElementById('logout').style.display = "none";
+
+    fetch("http://localhost:3000/employees")
+    .then(res => res.json())
+    .then((data) => {
+        for (let i = 0; i < data.length; i++) {
+            employeeList.push(new Employee(data[i]['id'],
+                                            data[i]['fName'],
+                                            data[i]['lName'],
+                                            data[i]['birthday'],
+                                            data[i]['gender'],
+                                            data[i]['email'],
+                                            data[i]['pwd'],
+                                            data[i]['adress'],
+                                            data[i]['phoneNumber'],
+                                            data[i]['contract'],
+                                            data[i]['contractStart'],
+                                            data[i]['baseSalary'],
+                                            data[i]['avatarAdress']));
+        }
+    });
+
+    // document.getElementById('logout').style.display = "none";
 };
 
 //Autorising only number to be print
@@ -63,7 +84,7 @@ document.getElementById('fakeData').addEventListener('click', (e) => generateDat
 
 //Adding an employee to employeeList[]
 document.getElementById('submit').addEventListener('click', (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     if (document.getElementById('form').checkValidity()) {
         if (searchDuplicate(document.getElementById('fName').value, "fName") && searchDuplicate(document.getElementById('lName').value, "lName"))
             alert("Erreur: l'utilisateur existe déjà");
@@ -72,7 +93,8 @@ document.getElementById('submit').addEventListener('click', (e) => {
         else if (searchDuplicate(document.getElementById('phone').value, "phone"))
             alert("Erreur: le numéro de téléphone est déjà utilisé");
         else {
-            let employee = new Employee(document.getElementById('fName').value,
+            let employee = new Employee(null,
+                                        document.getElementById('fName').value,
                                         document.getElementById('lName').value,
                                         document.getElementById('birthday').value,
                                         document.getElementById('gender').value,
@@ -108,6 +130,7 @@ document.getElementById('submit').addEventListener('click', (e) => {
             .catch(err => console.log(err));
             console.log(JSON.stringify(employeeList));
             window.name = JSON.stringify(employeeList);
+            printEmployees();
         }
     }
 });
@@ -116,23 +139,23 @@ document.getElementById('submit').addEventListener('click', (e) => {
 document.getElementById('print').addEventListener('click', (e) => {
     e.preventDefault();
     //Checking if there is some data store in window.name
-    if(employeeList.length === 0 && window.name != "") {
-        let windowName = JSON.parse(window.name);
-        for (let i = 0; i < windowName.length; i++)
-            employeeList.push(new Employee(windowName[i].fName,
-                                            windowName[i].lName,
-                                            windowName[i].birthday,
-                                            windowName[i].gender,
-                                            windowName[i].email,
-                                            windowName[i].pwd,
-                                            windowName[i].adress,
-                                            windowName[i].phoneNumber,
-                                            windowName[i].contract,
-                                            windowName[i].contractStart,
-                                            windowName[i].baseSalary,
-                                            windowName[i].avatarAdress
-            ));
-    }
+    // if(employeeList.length === 0 && window.name != "") {
+    //     let windowName = JSON.parse(window.name);
+    //     for (let i = 0; i < windowName.length; i++)
+    //         employeeList.push(new Employee(windowName[i].fName,
+    //                                         windowName[i].lName,
+    //                                         windowName[i].birthday,
+    //                                         windowName[i].gender,
+    //                                         windowName[i].email,
+    //                                         windowName[i].pwd,
+    //                                         windowName[i].adress,
+    //                                         windowName[i].phoneNumber,
+    //                                         windowName[i].contract,
+    //                                         windowName[i].contractStart,
+    //                                         windowName[i].baseSalary,
+    //                                         windowName[i].avatarAdress
+    //         ));
+    // }
     printEmployees();
 });
 
